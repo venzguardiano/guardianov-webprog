@@ -1,13 +1,15 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./NavBar";
+import Footer from "./Footer";
 
 const Layout = () => {
   return (
-    <div className="min-h-screen bg-zinc-100 text-zinc-900">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f4f4f5', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      <main className="pb-16 pt-20">
+      <main style={{ flex: 1, paddingTop: '80px', width: '100%' }}>
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 };

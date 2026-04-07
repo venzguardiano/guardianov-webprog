@@ -4,7 +4,7 @@ const AboutPage = () => {
   return (
     <div className="flex w-full flex-col gap-6">
       <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+        <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-2 lg:items-center">
           <div className="rounded-3xl border-2 border-zinc-900 overflow-hidden">
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop"
@@ -38,39 +38,41 @@ const AboutPage = () => {
       </section>
 
       <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <div className="mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
-            Our Track Record
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold text-zinc-900">Numbers that speak for us</h2>
-        </div>
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
+              Our Track Record
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold text-zinc-900">Numbers that speak for us</h2>
+          </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
-            <p className="text-2xl font-bold text-zinc-900">05</p>
-            <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Years of Experience</p>
-            <p className="mt-2 text-sm text-zinc-600">Half a decade of crafting digital experiences.</p>
-          </div>
-          <div className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
-            <p className="text-2xl font-bold text-zinc-900">16</p>
-            <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Projects Completed</p>
-            <p className="mt-2 text-sm text-zinc-600">From small sites to full-scale applications.</p>
-          </div>
-          <div className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
-            <p className="text-2xl font-bold text-zinc-900">09</p>
-            <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Happy Clients</p>
-            <p className="mt-2 text-sm text-zinc-600">Clients who keep coming back for more.</p>
-          </div>
-          <div className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
-            <p className="text-2xl font-bold text-zinc-900">03</p>
-            <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Focus Areas</p>
-            <p className="mt-2 text-sm text-zinc-600">Design, Development, and Brand Strategy.</p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
+              <p className="text-2xl font-bold text-zinc-900">05</p>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Years of Experience</p>
+              <p className="mt-2 text-sm text-zinc-600">Half a decade of crafting digital experiences.</p>
+            </div>
+            <div className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
+              <p className="text-2xl font-bold text-zinc-900">16</p>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Projects Completed</p>
+              <p className="mt-2 text-sm text-zinc-600">From small sites to full-scale applications.</p>
+            </div>
+            <div className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
+              <p className="text-2xl font-bold text-zinc-900">09</p>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Happy Clients</p>
+              <p className="mt-2 text-sm text-zinc-600">Clients who keep coming back for more.</p>
+            </div>
+            <div className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
+              <p className="text-2xl font-bold text-zinc-900">03</p>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Focus Areas</p>
+              <p className="mt-2 text-sm text-zinc-600">Design, Development, and Brand Strategy.</p>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="max-w-6xl mx-auto grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
               Our Story
@@ -83,7 +85,7 @@ const AboutPage = () => {
                 <p className="mt-3 text-sm leading-6 text-zinc-600">
                   WireFrame began as a side project between two friends who were frustrated with
                   how overpriced and overcomplicated design agencies had become. We wanted to
-                  offer something different honest, high-quality work at a fair price.
+                  offer something different, honest, high-quality work at a fair price.
                 </p>
               </article>
 
@@ -92,7 +94,7 @@ const AboutPage = () => {
                 <p className="mt-3 text-sm leading-6 text-zinc-600">
                   We believe design should serve people, not just impress them. Every project
                   we take on starts with understanding the problem deeply before we ever open
-                  a design tool. Good design is invisible it just works.
+                  a design tool. Good design is invisible, it just works.
                 </p>
               </article>
 
