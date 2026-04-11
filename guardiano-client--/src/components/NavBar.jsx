@@ -102,6 +102,25 @@ const Navbar = () => {
           >
             Articles
           </NavLink>
+
+          {/* Sign In Button */}
+          <NavLink
+            to="/auth/signin"
+            style={({ isActive }) => ({
+              color: isActive ? "#facc15" : "#18181b",
+              backgroundColor: isActive ? "transparent" : "#facc15",
+              padding: "8px 20px",
+              borderRadius: "6px",
+              textDecoration: "none",
+              fontWeight: "700",
+              fontSize: "15px",
+              border: isActive ? "1px solid #facc15" : "1px solid #facc15",
+              transition: "all 0.2s",
+              marginLeft: "8px",
+            })}
+          >
+            Sign In
+          </NavLink>
         </div>
       </div>
 
@@ -152,6 +171,23 @@ const Navbar = () => {
             })}
           >
             Articles
+          </NavLink>
+
+          {/* Sign In - Mobile */}
+          <NavLink
+            to="/auth/signin"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              color: "#18181b",
+              backgroundColor: "#facc15",
+              padding: "10px 14px",
+              borderRadius: "6px",
+              textDecoration: "none",
+              fontWeight: "700",
+              fontSize: "15px",
+            }}
+          >
+            Sign In
           </NavLink>
         </div>
       )}
