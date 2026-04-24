@@ -1,6 +1,20 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const SignInPage = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = () => {
+    if (email === 'vyog123@gmail.com' && password === '123') {
+      navigate('/dashboard/');
+    } else {
+      setError('Invalid email or password.');
+    }
+  };
+
   return (
     <div>
       {/* Header */}
@@ -27,6 +41,8 @@ const SignInPage = () => {
             type="email"
             placeholder="you@example.com"
             autoComplete="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             style={{
               marginTop: "6px", width: "100%", padding: "12px 16px",
               border: "2px solid #e4e4e7", borderRadius: "10px",
@@ -46,6 +62,8 @@ const SignInPage = () => {
             type="password"
             placeholder="••••••••"
             autoComplete="current-password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
             style={{
               marginTop: "6px", width: "100%", padding: "12px 16px",
               border: "2px solid #e4e4e7", borderRadius: "10px",
@@ -60,6 +78,13 @@ const SignInPage = () => {
           </p>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <p style={{ fontSize: "13px", color: "red", margin: 0 }}>
+            {error}
+          </p>
+        )}
+
         {/* Remember me & Forgot */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#52525b", cursor: "pointer" }}>
@@ -72,13 +97,15 @@ const SignInPage = () => {
         </div>
 
         {/* Primary Button */}
-        <button style={{
-          width: "100%", padding: "13px", backgroundColor: "#facc15",
-          color: "#18181b", fontWeight: "800", fontSize: "13px",
-          textTransform: "uppercase", letterSpacing: "0.15em",
-          border: "none", borderRadius: "10px", cursor: "pointer",
-          transition: "opacity 0.2s",
-        }}
+        <button
+          onClick={handleLogin}
+          style={{
+            width: "100%", padding: "13px", backgroundColor: "#facc15",
+            color: "#18181b", fontWeight: "800", fontSize: "13px",
+            textTransform: "uppercase", letterSpacing: "0.15em",
+            border: "none", borderRadius: "10px", cursor: "pointer",
+            transition: "opacity 0.2s",
+          }}
           onMouseEnter={e => e.target.style.opacity = "0.85"}
           onMouseLeave={e => e.target.style.opacity = "1"}
         >

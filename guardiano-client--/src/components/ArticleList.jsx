@@ -5,7 +5,7 @@ const ArticleList = ({ articles }) => {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {articles.map((article, index) => (
-        <article key={article.name} className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-4">
+        <article key={article.name} className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-4 flex flex-col">
           <div className="flex aspect-4/3 items-center justify-center rounded-[1.25rem] overflow-hidden">
             <img
               src={article.image}
@@ -17,11 +17,11 @@ const ArticleList = ({ articles }) => {
             Article {String(index + 1).padStart(2, '0')}
           </p>
           <h3 className="mt-2 text-lg font-semibold text-zinc-900">{article.title}</h3>
-          <p className="mt-3 text-sm leading-6 text-zinc-600">
+          <p className="mt-3 text-sm leading-6 text-zinc-600 flex-1">
             {article.content[0].substring(0, 150)}...
           </p>
-          <Link to={`/articles/${article.name}`}>
-            <Button className="mt-4">Read More</Button>
+          <Link to={`/articles/${article.name}`} className="mt-4">
+            <Button>Read More</Button>
           </Link>
         </article>
       ))}

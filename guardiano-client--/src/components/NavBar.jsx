@@ -12,6 +12,33 @@ const Logo = () => (
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const linkStyle = (isActive) => ({
+    color: isActive ? "#18181b" : "white",
+    backgroundColor: isActive ? "#facc15" : "transparent",
+    padding: "8px 20px",
+    borderRadius: "999px",
+    textDecoration: "none",
+    fontWeight: "700",
+    fontSize: "13px",
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    border: isActive ? "2px solid #facc15" : "2px solid transparent",
+    transition: "all 0.2s",
+  });
+
+  const mobileLinkStyle = (isActive) => ({
+    color: isActive ? "#18181b" : "white",
+    backgroundColor: isActive ? "#facc15" : "transparent",
+    padding: "10px 14px",
+    borderRadius: "999px",
+    textDecoration: "none",
+    fontWeight: "700",
+    fontSize: "13px",
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    border: isActive ? "2px solid #facc15" : "2px solid transparent",
+  });
+
   return (
     <nav style={{ backgroundColor: "#18181b", padding: "16px 32px", borderBottom: "3px solid #facc15" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -51,57 +78,9 @@ const Navbar = () => {
         </button>
 
         <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <NavLink
-            to="/"
-            end
-            style={({ isActive }) => ({
-              color: isActive ? "#18181b" : "white",
-              backgroundColor: isActive ? "#facc15" : "transparent",
-              padding: "8px 20px",
-              borderRadius: "6px",
-              textDecoration: "none",
-              fontWeight: "600",
-              fontSize: "15px",
-              border: isActive ? "1px solid #facc15" : "1px solid transparent",
-              transition: "all 0.2s",
-            })}
-          >
-            Home
-          </NavLink>
-
-          <NavLink
-            to="/about"
-            style={({ isActive }) => ({
-              color: isActive ? "#18181b" : "white",
-              backgroundColor: isActive ? "#facc15" : "transparent",
-              padding: "8px 20px",
-              borderRadius: "6px",
-              textDecoration: "none",
-              fontWeight: "600",
-              fontSize: "15px",
-              border: isActive ? "1px solid #facc15" : "1px solid transparent",
-              transition: "all 0.2s",
-            })}
-          >
-            About
-          </NavLink>
-
-          <NavLink
-            to="/articles"
-            style={({ isActive }) => ({
-              color: isActive ? "#18181b" : "white",
-              backgroundColor: isActive ? "#facc15" : "transparent",
-              padding: "8px 20px",
-              borderRadius: "6px",
-              textDecoration: "none",
-              fontWeight: "600",
-              fontSize: "15px",
-              border: isActive ? "1px solid #facc15" : "1px solid transparent",
-              transition: "all 0.2s",
-            })}
-          >
-            Articles
-          </NavLink>
+          <NavLink to="/" end style={({ isActive }) => linkStyle(isActive)}>Home</NavLink>
+          <NavLink to="/about" style={({ isActive }) => linkStyle(isActive)}>About</NavLink>
+          <NavLink to="/articles" style={({ isActive }) => linkStyle(isActive)}>Articles</NavLink>
 
           {/* Sign In Button */}
           <NavLink
@@ -110,11 +89,13 @@ const Navbar = () => {
               color: isActive ? "#facc15" : "#18181b",
               backgroundColor: isActive ? "transparent" : "#facc15",
               padding: "8px 20px",
-              borderRadius: "6px",
+              borderRadius: "999px",
               textDecoration: "none",
               fontWeight: "700",
-              fontSize: "15px",
-              border: isActive ? "1px solid #facc15" : "1px solid #facc15",
+              fontSize: "13px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              border: "2px solid #facc15",
               transition: "all 0.2s",
               marginLeft: "8px",
             })}
@@ -126,52 +107,9 @@ const Navbar = () => {
 
       {menuOpen && (
         <div style={{ display: "flex", flexDirection: "column", marginTop: "14px", gap: "6px" }}>
-          <NavLink
-            to="/"
-            end
-            onClick={() => setMenuOpen(false)}
-            style={({ isActive }) => ({
-              color: isActive ? "#18181b" : "white",
-              backgroundColor: isActive ? "#facc15" : "transparent",
-              padding: "10px 14px",
-              borderRadius: "6px",
-              textDecoration: "none",
-              fontWeight: "600",
-              fontSize: "15px",
-            })}
-          >
-            Home
-          </NavLink>
-          <NavLink
-            to="/about"
-            onClick={() => setMenuOpen(false)}
-            style={({ isActive }) => ({
-              color: isActive ? "#18181b" : "white",
-              backgroundColor: isActive ? "#facc15" : "transparent",
-              padding: "10px 14px",
-              borderRadius: "6px",
-              textDecoration: "none",
-              fontWeight: "600",
-              fontSize: "15px",
-            })}
-          >
-            About
-          </NavLink>
-          <NavLink
-            to="/articles"
-            onClick={() => setMenuOpen(false)}
-            style={({ isActive }) => ({
-              color: isActive ? "#18181b" : "white",
-              backgroundColor: isActive ? "#facc15" : "transparent",
-              padding: "10px 14px",
-              borderRadius: "6px",
-              textDecoration: "none",
-              fontWeight: "600",
-              fontSize: "15px",
-            })}
-          >
-            Articles
-          </NavLink>
+          <NavLink to="/" end onClick={() => setMenuOpen(false)} style={({ isActive }) => mobileLinkStyle(isActive)}>Home</NavLink>
+          <NavLink to="/about" onClick={() => setMenuOpen(false)} style={({ isActive }) => mobileLinkStyle(isActive)}>About</NavLink>
+          <NavLink to="/articles" onClick={() => setMenuOpen(false)} style={({ isActive }) => mobileLinkStyle(isActive)}>Articles</NavLink>
 
           {/* Sign In - Mobile */}
           <NavLink
@@ -181,10 +119,13 @@ const Navbar = () => {
               color: "#18181b",
               backgroundColor: "#facc15",
               padding: "10px 14px",
-              borderRadius: "6px",
+              borderRadius: "999px",
               textDecoration: "none",
               fontWeight: "700",
-              fontSize: "15px",
+              fontSize: "13px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              border: "2px solid #facc15",
             }}
           >
             Sign In
