@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { loginUser } from '../../services/UserService';
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -7,11 +8,28 @@ const SignInPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    if (email === 'vyog123@gmail.com' && password === '123') {
-      navigate('/dashboard/');
-    } else {
-      setError('Invalid email or password.');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await loginUser({ email, password });
+      console.log('Login successful', data);
+
+      // Viewers cannot log in
+      if (data.type === 'viewer') {
+        setError('Your account does not have permission to log in.');
+        return;
+      }
+
+      // Store user info in localStorage for dynamic rendering
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('firstName', data.firstName);
+      localStorage.setItem('type', data.type);
+
+      // Navigate to the dashboard with the user's email and type
+      navigate('/dashboard/', { state: { firstName: data.firstName, type: data.type } });
+    } catch (err) {
+      console.error('Login failed:', err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     }
   };
 

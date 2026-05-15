@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Alert,
   Box,
@@ -24,7 +25,7 @@ import { useTheme } from '@mui/material/styles';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { DataGrid } from '@mui/x-data-grid';
-import usersSeed from '../../data/users.json?raw';
+import { fetchUsers, createUser, updateUser, deleteUser } from '../../services/UserService';
 
 const roles = ['admin', 'editor', 'viewer'];
 const genders = ['male', 'female', 'other'];
@@ -36,7 +37,7 @@ const blankForm = {
   gender: '',
   contactNumber: '',
   email: '',
-  role: 'editor',
+  type: 'editor',
   username: '',
   password: '',
   address: '',
@@ -46,62 +47,55 @@ const blankForm = {
 const labelize = (value) =>
   value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : '';
 
-const loadUsers = () => {
-  try {
-    return {
-      users: JSON.parse(usersSeed).map((user, index) => ({
-        id: Number(user.id) || index + 1,
-        firstName: String(user.firstName ?? '').trim(),
-        lastName: String(user.lastName ?? '').trim(),
-        age: String(user.age ?? '').trim(),
-        gender: genders.includes(String(user.gender ?? '').trim().toLowerCase())
-          ? String(user.gender ?? '').trim().toLowerCase()
-          : '',
-        contactNumber: String(user.contactNumber ?? '').trim(),
-        email: String(user.email ?? '').trim().toLowerCase(),
-        role: roles.includes(String(user.role ?? '').trim().toLowerCase())
-          ? String(user.role ?? '').trim().toLowerCase()
-          : 'editor',
-        username: String(user.username ?? '').trim().toLowerCase(),
-        password: String(user.password ?? ''),
-        address: String(user.address ?? '').trim(),
-        isActive: typeof user.isActive === 'boolean' ? user.isActive : true,
-      })),
-      error: '',
-    };
-  } catch {
-    return {
-      users: [],
-      error: 'Unable to read users from src/data/users.json.',
-    };
-  }
-};
-
-const seed = loadUsers();
-
 const UsersPage = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [users, setUsers] = useState(seed.users);
+
+  // Enhancement 1: Editors cannot access UsersPage
+  useEffect(() => {
+    const type = localStorage.getItem('type');
+    if (type === 'editor') {
+      navigate('/dashboard/');
+    }
+  }, []);
+
+  const [users, setUsers] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [modal, setModal] = useState({ open: false, id: null });
   const [form, setForm] = useState({ ...blankForm });
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-
   const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [filterGender, setFilterGender] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
 
+  // Fetch users from API
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const { data } = await fetchUsers();
+        setUsers(data.users.map((user) => ({ ...user, id: user._id })));
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadUsers();
+  }, []);
+
   const filteredUsers = users.filter((user) => {
     const searchLower = search.toLowerCase();
     const matchesSearch =
       !search ||
-      user.firstName.toLowerCase().includes(searchLower) ||
-      user.lastName.toLowerCase().includes(searchLower) ||
-      user.email.toLowerCase().includes(searchLower) ||
-      user.username.toLowerCase().includes(searchLower);
-    const matchesRole = !filterRole || user.role === filterRole;
+      user.firstName?.toLowerCase().includes(searchLower) ||
+      user.lastName?.toLowerCase().includes(searchLower) ||
+      user.email?.toLowerCase().includes(searchLower) ||
+      user.username?.toLowerCase().includes(searchLower);
+    const matchesRole = !filterRole || user.type === filterRole;
     const matchesGender = !filterGender || user.gender === filterGender;
     const matchesStatus =
       !filterStatus ||
@@ -109,17 +103,19 @@ const UsersPage = () => {
     return matchesSearch && matchesRole && matchesGender && matchesStatus;
   });
 
-  const resetForm = () => { setForm({ ...blankForm }); setErrors([]); };
+  const resetForm = () => { setForm({ ...blankForm }); setErrors({}); };
 
   const openModal = (user) => {
-    setModal({ open: true, id: user?.id ?? null });
-    setForm(user ? { ...blankForm, ...user } : { ...blankForm });
-    setErrors([]);
+    setModal({ open: true, id: user?._id ?? null });
+    setIsEditing(!!user?._id);
+    setForm(user ? { ...blankForm, ...user, type: user.type || 'editor' } : { ...blankForm });
+    setErrors({});
   };
 
   const closeModal = () => {
     setModal({ open: false, id: null });
     setShowPassword(false);
+    setIsEditing(false);
     resetForm();
   };
 
@@ -140,13 +136,16 @@ const UsersPage = () => {
       ['gender', 'Gender'],
       ['contactNumber', 'Contact number'],
       ['email', 'Email'],
-      ['role', 'Role'],
+      ['type', 'Role'],
       ['username', 'Username'],
-      ['password', 'Password'],
       ['address', 'Address'],
     ].forEach(([key, label]) => {
       if (!String(form[key]).trim()) nextErrors[key] = `${label} is required.`;
     });
+
+    if (!isEditing && !form.password.trim()) {
+      nextErrors.password = 'Password is required.';
+    }
 
     if (form.age && !/^\d+$/.test(form.age.trim()))
       nextErrors.age = 'Age must be a number only.';
@@ -158,15 +157,11 @@ const UsersPage = () => {
       nextErrors.username = 'Username must not contain spaces.';
     if (mustEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mustEmail))
       nextErrors.email = 'Enter a valid email address.';
-    if (mustEmail && users.some((user) => user.id !== modal.id && user.email === mustEmail))
-      nextErrors.email = 'Email address already exists.';
-    if (username && users.some((u) => u.id !== modal.id && u.username === username))
-      nextErrors.username = 'Username already exists.';
 
     return nextErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const nextErrors = validate();
     if (Object.keys(nextErrors).length) { setErrors(nextErrors); return; }
@@ -178,23 +173,39 @@ const UsersPage = () => {
       gender: form.gender.trim().toLowerCase(),
       contactNumber: form.contactNumber.trim(),
       email: form.email.trim().toLowerCase(),
-      role: form.role.trim().toLowerCase(),
+      type: form.type.trim().toLowerCase(),
       username: form.username.trim().toLowerCase(),
-      password: form.password,
       address: form.address.trim(),
       isActive: form.isActive,
     };
 
-    setUsers((prev) =>
-      modal.id
-        ? prev.map((user) => user.id === modal.id ? { ...user, ...newUser } : user)
-        : [...prev, { id: prev.reduce((max, user) => Math.max(max, Number(user.id) || 0), 0) + 1, ...newUser }]
-    );
-    closeModal();
+    if (form.password) newUser.password = form.password;
+
+    try {
+      if (isEditing) {
+        await updateUser(modal.id, newUser);
+        setUsers((prev) =>
+          prev.map((user) => user._id === modal.id ? { ...user, ...newUser } : user)
+        );
+      } else {
+        const { data } = await createUser(newUser);
+        setUsers((prev) => [...prev, { ...data, id: data._id }]);
+      }
+      closeModal();
+    } catch (error) {
+      console.error('Error saving user:', error);
+    }
   };
 
-  const toggleStatus = (id) => {
-    setUsers((prev) => prev.map((user) => user.id === id ? { ...user, isActive: !user.isActive } : user));
+  const toggleStatus = async (id, isActive) => {
+    try {
+      await updateUser(id, { isActive: !isActive });
+      setUsers((prev) =>
+        prev.map((user) => user._id === id ? { ...user, isActive: !isActive } : user)
+      );
+    } catch (error) {
+      console.error('Error toggling status:', error);
+    }
   };
 
   const fieldProps = (name, label, extra = {}) => ({
@@ -210,7 +221,7 @@ const UsersPage = () => {
     { field: 'gender', headerName: 'Gender', minWidth: 110, valueGetter: (_, row) => labelize(row.gender) },
     { field: 'contactNumber', headerName: 'Contact Number', minWidth: 150 },
     { field: 'email', headerName: 'Email', flex: 1, minWidth: 150 },
-    { field: 'role', headerName: 'Role', minWidth: 170, valueGetter: (_, row) => labelize(row.role) },
+    { field: 'type', headerName: 'Role', minWidth: 170, valueGetter: (_, row) => labelize(row.type) },
     {
       field: 'isActive', headerName: 'Status', minWidth: 110, sortable: false,
       renderCell: (({ row }) => (
@@ -225,7 +236,8 @@ const UsersPage = () => {
             sx={{ backgroundColor: '#facc15', color: '#18181b', fontWeight: 700, '&:hover': { backgroundColor: '#e6b800' } }}>
             Edit
           </Button>
-          <Button size="small" variant="outlined" color={row.isActive ? 'warning' : 'success'} onClick={() => toggleStatus(row.id)}>
+          <Button size="small" variant="outlined" color={row.isActive ? 'warning' : 'success'}
+            onClick={() => toggleStatus(row._id, row.isActive)}>
             {row.isActive ? 'Disable' : 'Activate'}
           </Button>
         </Stack>
@@ -257,7 +269,7 @@ const UsersPage = () => {
           { label: 'Total Users', value: users.length },
           { label: 'Active Users', value: users.filter(u => u.isActive).length },
           { label: 'Inactive Users', value: users.filter(u => !u.isActive).length },
-          { label: 'Admin Users', value: users.filter(u => u.role === 'admin').length },
+          { label: 'Admin Users', value: users.filter(u => u.type === 'admin').length },
         ].map((card) => (
           <Box key={card.label} sx={{ flex: 1, borderTop: '4px solid #facc15', borderRadius: 3, backgroundColor: '#18181b', p: 2 }}>
             <Typography variant="body2" sx={{ color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '11px', fontWeight: 700 }}>
@@ -315,8 +327,6 @@ const UsersPage = () => {
           Add User
         </Button>
       </Box>
-
-      {seed.error ? <Alert severity="error" sx={{ mb: 2 }}>{seed.error}</Alert> : null}
 
       {/* Users Table */}
       <Box sx={{ mb: 1 }}>
@@ -379,7 +389,7 @@ const UsersPage = () => {
                 <TextField {...fieldProps('email', 'Email Address', { type: 'email' })} />
               </Stack>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                <TextField {...fieldProps('role', 'Role', { select: true })}>
+                <TextField {...fieldProps('type', 'Role', { select: true })}>
                   {roles.map((role) => <MenuItem key={role} value={role}>{labelize(role)}</MenuItem>)}
                 </TextField>
                 <TextField {...fieldProps('username', 'Username')} />
@@ -387,6 +397,7 @@ const UsersPage = () => {
               <TextField
                 {...fieldProps('password', 'Password')}
                 type={showPassword ? 'text' : 'password'}
+                helperText={isEditing ? 'Leave blank to keep current password' : errors.password}
                 slotProps={{
                   input: {
                     endAdornment: (
