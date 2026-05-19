@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
-import articlesData from '../../data/article-content.js';
+import articlesData from "../../data/article-content.js";
 
 const categories = ['technology', 'sports', 'business', 'lifestyle'];
 
