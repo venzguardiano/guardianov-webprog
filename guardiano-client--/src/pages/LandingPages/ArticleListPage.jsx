@@ -1,8 +1,29 @@
+import { useEffect, useState } from 'react';
 import Button from '../../components/Button.jsx';
 import ArticleList from '../../components/ArticleList.jsx';
-import articles from '../../data/article-content.js';
+import { fetchArticles } from '../../services/ArticleService';
 
 const ArticleListPage = () => {
+  const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    const loadArticles = async () => {
+      try {
+        const { data } = await fetchArticles();
+
+        const publishedArticles = data.articles.filter(
+          (article) => article.isPublished
+        );
+
+        setArticles(publishedArticles);
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      }
+    };
+
+    loadArticles();
+  }, []);
+
   return (
     <div className="flex w-full flex-col gap-6">
       <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
@@ -10,13 +31,16 @@ const ArticleListPage = () => {
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
             Articles
           </p>
+
           <h1 className="max-w-xl text-3xl font-bold leading-tight text-zinc-900 sm:text-4xl">
             Featured articles in a simple card grid
           </h1>
+
           <p className="mt-4 max-w-lg text-sm leading-7 text-zinc-600 sm:text-base">
-            A clean wireframe section for article thumbnails, titles, short descriptions, and one
-            clear action per card.
+            A clean wireframe section for article thumbnails, titles,
+            short descriptions, and one clear action per card.
           </p>
+
           <div className="mt-6">
             <Button to="/">Back Home</Button>
           </div>
@@ -29,8 +53,12 @@ const ArticleListPage = () => {
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
               Featured Articles
             </p>
-            <h2 className="mt-2 text-2xl font-semibold text-zinc-900">Article card grid</h2>
+
+            <h2 className="mt-2 text-2xl font-semibold text-zinc-900">
+              Article card grid
+            </h2>
           </div>
+
           <ArticleList articles={articles} />
         </div>
       </section>

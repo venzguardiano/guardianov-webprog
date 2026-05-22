@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
+const articleRoutes = require("./routes/articleRoutes");
 
 const app = express();
 
@@ -21,14 +22,14 @@ app.use(cors());
 
 // vercel options
 const corsOptions = {
-  origin: "*", // Allow all origins
-  credentials: true, // Allow credentials
+  origin: "*",
+  credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
   preflightContinue: false,
-  optionsSuccessStatus: 204, // For legacy browser support
+  optionsSuccessStatus: 204,
 };
-app.options("", cors(corsOptions)); // Pre-flight request for all routes
+app.options("", cors(corsOptions));
 app.use(cors(corsOptions));
 
 // Curb Cores Error by adding a header here
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/articles", articleRoutes);
 
 // Error Handling
 app.use((err, req, res, next) => {
